@@ -1,28 +1,32 @@
 import streamlit as st
 
+from llm.client import send_to_llm
+from utils.session import initialize_chat, add_message
+
 
 # ----------------------------
-# Page Configuration
+# Page Setup
 # ----------------------------
 
 st.set_page_config(
-    page_title="LLM Prompt Security Testing App",
+    page_title="My LLM Chatbot",
+    page_icon="🤖"
 )
 
 
-st.title("LLM Prompt Security Testing App   ")
+st.title("🤖 My Hosted LLM Chatbot")
 
 
 # ----------------------------
-# Initialize Chat History
+# Initialize session
 # ----------------------------
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+initialize_chat()
+
 
 
 # ----------------------------
-# Display Previous Messages
+# Display chat history
 # ----------------------------
 
 for message in st.session_state.messages:
@@ -37,18 +41,16 @@ for message in st.session_state.messages:
 # ----------------------------
 
 prompt = st.chat_input(
-    "Type your message here..."
+    "Type your message..."
 )
 
 
 if prompt:
 
-    # Save user prompt
-    st.session_state.messages.append(
-        {
-            "role": "user",
-            "content": prompt
-        }
+    # Save user message
+    add_message(
+        "user",
+        prompt
     )
 
 
@@ -58,49 +60,20 @@ if prompt:
 
 
 
-    # ------------------------------------
-    # PLACEHOLDER FOR YOUR LLM CONNECTION
-    # ------------------------------------
-
-    response = send_to_llm(prompt)
-
+    # Send to LLM
+    response = send_to_llm(
+        prompt
+    )
 
 
-    # Display LLM response
+    # Display response
     with st.chat_message("assistant"):
         st.write(response)
 
 
-    # Save assistant response
-    st.session_state.messages.append(
-        {
-            "role": "assistant",
-            "content": response
-        }
+
+    # Save response
+    add_message(
+        "assistant",
+        response
     )
-
-
-
-# ----------------------------
-# LLM Function
-# ----------------------------
-
-def send_to_llm(prompt):
-
-    """
-    This function will later send
-    your prompt to your hosted LLM.
-
-    Example:
-
-    POST
-    http://your-llm-server/api/chat
-
-    Body:
-    {
-        "prompt": "hello"
-    }
-
-    """
-
-    return "LLM response will appear here"
